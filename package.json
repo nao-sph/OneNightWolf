@@ -1,0 +1,19 @@
+{
+  "name": "onenightwolf",
+  "version": "1.0.0",
+  "description": "## ゲームの流れ ### ゲーム開始画面",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nao-sph/OneNightWolf.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nao-sph/OneNightWolf/issues"
+  },
+  "homepage": "https://github.com/nao-sph/OneNightWolf#readme"
+}
