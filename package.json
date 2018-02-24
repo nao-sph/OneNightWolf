@@ -3,12 +3,6 @@
   "version": "1.0.0",
   "description": "## ゲームの流れ ### ゲーム開始画面",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "scripts": {
-    "start": "node index.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nao-sph/OneNightWolf.git"
