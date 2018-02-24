@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/nao-sph/OneNightWolf/issues"
   },
-  "homepage": "https://github.com/nao-sph/OneNightWolf#readme"
+  "homepage": "https://github.com/nao-sph/OneNightWolf#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^2.0.4"
+  }
 }
