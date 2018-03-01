@@ -30,17 +30,26 @@
         socket.on('connect', () => {
 
           // Playerにナンバリング
-          socket.emit('player join', ['room1', socket.id])
+          socket.emit('player join', {roomName:'room1', id:socket.id})
           $('#disp').append($('<ul id="names">'))
           socket.on('player joined', (room) => {
             $('#names').empty()
             for(let player of room.players){
+              // 名前の表示
               $('#names').append($('<li id="' + player.pid + '">').text(player.name))
+              // 入力部分への反映
+              if(player.pid === socket.id){
+                $('#name').val(player.name)
+              }
+            }
+            // ホストプレイヤーの場合
+            if(room.players[0].pid === socket.id){
+              $('#disp').append($('<p>').text("you're host"))
             }
           })
 
           // 名前の変更を拾って反映
-          $('#name').change(() => {
+          $('#name').keyup(() => {
             socket.emit('name change', {name:$('#name').val(), id:socket.id})
             return false
           })

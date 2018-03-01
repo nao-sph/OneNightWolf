@@ -85,10 +85,10 @@ io.on('connection', function(socket){
   io.emit('connected', RM)
 
   socket.on('player join', (data) => { // 本当はroom作成後
-    let room = RM.join(data[0], data[1]) // data[0]->roomName, data[1]->pid
-    console.log(data);
+    console.log('player join', data);
+    let room = RM.join(data.roomName, data.id)
+    console.log('check!', room.players[0]);
     io.emit('player joined', room)
-    console.log(room);
   })
 
   socket.on('disconnect', () => {
@@ -97,13 +97,7 @@ io.on('connection', function(socket){
     // PM.leave(socket.id)
   });
 
-  socket.on('chat message', function(msg){
-    console.log('message: ' + msg);
-    io.emit('chat message', msg);
-  });
-
   socket.on('name change', (data) => {
-    console.log(data)
     RM.rename(data.name, data.id)
     io.emit('name change', data)
   })
