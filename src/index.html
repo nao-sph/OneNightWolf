@@ -14,12 +14,12 @@
     </style>
   </head>
   <body>
-    <div id="names"></div>
-    <ul id="messages"></ul>
+    <div id="disp"></div>
+    <!-- <ul id="messages"></ul> -->
     <input type="text" id="name" size="30" maxlength="20">
-    <form action="">
+    <!-- <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
+    </form> -->
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -27,29 +27,40 @@
       $(() => {
         const socket = io()
 
-        socket.on('connected', (RM) => {
-          for(let v of RM.rooms){
-            $('#names').val('')
-            $('#names').append($('<p>').text(v.name))
-          }
+        socket.on('connect', () => {
+          let id = socket.id
+          socket.emit('player join', ['room1', id])
+          $('#disp').append($('<ul id="names">'))
+          socket.on('player joined', (room) => {
+            $('#names').empty()
+            for(let player of room.players){
+              $('#names').append($('<li id="' + socket.id + '">').text('Player' + player.idx))
+            }
+
+          })
+
+          $('#name').change(() => {
+            socket.emit('name change', $('#name').val())
+            return false
+          })
+          socket.on('name change', (name) => {
+            $('#' + socket.id).text(name)
+          })
+
         })
 
-        $('form').submit(() => {
-          socket.emit('chat message', $('#m').val())
-          $('#m').val('')
-          return false
-        })
-        socket.on('chat message', (msg) => {
-          $('#messages').append($('<li>').text(msg))
-        })
 
-        $('#name').change(() => {
-          socket.emit('name change', $('#name').val())
-          return false
-        })
-        socket.on('name change', (name) => {
-          $('#names').append($('<p>').text(name))
-        })
+
+        // $('form').submit(() => {
+        //   socket.emit('chat message', $('#m').val())
+        //   $('#m').val('')
+        //   return false
+        // })
+        // socket.on('chat message', (msg) => {
+        //   $('#messages').append($('<li>').text(msg))
+        // })
+
+
       })
     </script>
   </body>

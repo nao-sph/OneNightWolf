@@ -20,6 +20,7 @@ class Room {
     this.idx = 0
     this.num = 0
     this.players = []
+    console.log('made room', rname);
   }
 
   join (pid) {
@@ -30,18 +31,37 @@ class Room {
 
   leave (pid) {
     this.num--
-    let i = 0;
-    this.players.splice(this.players.indexOf(),1)
+    for(let i in this.players){
+      if(this.players[i].pid === pid){
+        this.players.splice(i, 1)
+        break
+      }
+    }
   }
 }
 
 class RoomManager {
   constructor () {
-    this.rooms = [new Room("ひまわり"), new Room("紫陽花")]
+    this.rooms = [new Room("room1"), new Room("room2")]
+    this.playersRoom = {}
   }
 
   make (rid) {
     this.rooms.push(new Room(rname))
+  }
+
+  join (rname, pid) {
+    for(let room of this.rooms){
+      if(room.name === rname){
+        room.join(pid)
+        this.playersRoom[pid] = room
+        return room
+      }
+    }
+  }
+
+  leave (pid) {
+    this.playersRoom[pid].leave(pid)
   }
 }
 
@@ -54,8 +74,16 @@ io.on('connection', function(socket){
 
   io.emit('connected', RM)
 
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
+  socket.on('player join', (data) => { // 本当はroom作成後
+    let room = RM.join(data[0], data[1]) // data[0]->roomName, data[1]->pid
+    console.log(data);
+    io.emit('player joined', room)
+    console.log(room);
+  })
+
+  socket.on('disconnect', () => {
+    console.log('disconnect', socket.id);
+    RM.leave(socket.id)
     // PM.leave(socket.id)
   });
 
