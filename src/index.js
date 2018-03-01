@@ -15,12 +15,46 @@ class Player {
   }
 }
 
+class Role {
+  constructor (pnum) {
+    this.roles = {
+      jinrou: 2,
+      uranaishi: 1,
+      kaitou: 1,
+      tsuribito: 0,
+      kariudo: 0,
+      kyoujin: 0,
+      tairou: 0
+    }
+    if(pnum >= 4) this.roles.tsuribito++
+    if(pnum >= 5) this.roles.kariudo++
+    if(pnum >= 6) this.roles.kyoujin++
+    if(pnum >= 7) {
+      this.roles.tairou++
+      this.roles.jinrou--
+    }
+    if(pnum >= 8){
+      this.roles.uranaishi++
+      this.roles.jinrou++
+    }
+  }
+
+  getHoldersNum () {
+    let t = 0
+    for(let role in this.roles){
+      t += this.roles[role]
+    }
+    return t
+  }
+}
+
 class Room {
   constructor (rname) {
     this.name = rname
     this.idx = 0
     this.num = 0
     this.players = []
+    this.game
     console.log('made room', rname);
   }
 
@@ -38,6 +72,10 @@ class Room {
         break
       }
     }
+  }
+
+  start () {
+    return new Role(this.num)
   }
 }
 
@@ -100,6 +138,10 @@ io.on('connection', function(socket){
   socket.on('name change', (data) => {
     RM.rename(data.name, data.id)
     io.emit('name change', data)
+  })
+
+  socket.on('game start', (pid) => {
+
   })
 });
 
