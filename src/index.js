@@ -64,6 +64,15 @@ class RoomManager {
   leave (pid) {
     this.playersRoom[pid].leave(pid)
   }
+
+  rename (name, pid) {
+    for(let player of this.playersRoom[pid].players){
+      if(player.pid === pid){
+        player.name = name
+        break
+      }
+    }
+  }
 }
 
 const RM = new RoomManager()
@@ -94,7 +103,8 @@ io.on('connection', function(socket){
   });
 
   socket.on('name change', (data) => {
-    console.log(data);
+    console.log(data)
+    RM.rename(data.name, data.id)
     io.emit('name change', data)
   })
 });
