@@ -10,6 +10,7 @@ class Player {
   constructor (idx, pid) {
     this.idx = idx
     this.pid = pid
+    this.name = 'Player' + idx
     this.isOnline = true
   }
 }
@@ -92,9 +93,9 @@ io.on('connection', function(socket){
     io.emit('chat message', msg);
   });
 
-  socket.on('name change', (name) => {
-    console.log('name: ' + name);
-    io.emit('name change', name)
+  socket.on('name change', (data) => {
+    console.log(data);
+    io.emit('name change', data)
   })
 });
 

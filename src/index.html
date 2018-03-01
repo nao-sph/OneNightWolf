@@ -28,23 +28,26 @@
         const socket = io()
 
         socket.on('connect', () => {
-          let id = socket.id
-          socket.emit('player join', ['room1', id])
+
+          // Playerにナンバリング
+          socket.emit('player join', ['room1', socket.id])
           $('#disp').append($('<ul id="names">'))
           socket.on('player joined', (room) => {
             $('#names').empty()
             for(let player of room.players){
-              $('#names').append($('<li id="' + socket.id + '">').text('Player' + player.idx))
+              $('#names').append($('<li id="' + player.pid + '">').text(player.name))
             }
-
           })
 
+          // 名前の変更を拾って反映
           $('#name').change(() => {
-            socket.emit('name change', $('#name').val())
+            socket.emit('name change', {name:$('#name').val(), id:socket.id})
             return false
           })
-          socket.on('name change', (name) => {
-            $('#' + socket.id).text(name)
+          socket.on('name change', (data) => {
+            let name = data.name
+            let id = data.id
+            $('#' + id).text(name)
           })
 
         })
