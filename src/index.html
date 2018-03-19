@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>One Night Werewolf</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -16,7 +16,7 @@
   <body>
     <div id="disp"></div>
     <!-- <ul id="messages"></ul> -->
-    <input type="text" id="name" size="30" maxlength="20">
+
     <!-- <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form> -->
@@ -29,10 +29,22 @@
 
         socket.on('connect', () => {
 
+          // get roomList
+
           // Playerにナンバリング
-          socket.emit('player join', {roomName:'room1', id:socket.id})
+          let roomName = 'room1'
+          socket.emit('player join', {roomName:roomName, id:socket.id})
           $('#disp').append($('<ul id="names">'))
+          $('#disp').append($('<input type="text" id="name" size="30" maxlength="20">'))
           socket.on('player joined', (room) => {
+            playerDisp(room)
+          })
+
+          socket.on('disconnect', (room) => {
+            playerDisp(room)
+          })
+
+          function playerDisp (room) {
             $('#names').empty()
             for(let player of room.players){
               // 名前の表示
@@ -45,9 +57,14 @@
             // ホストプレイヤーの場合
             if(room.players[0].pid === socket.id && room.num >= 3){
               $('#startButton').remove()
-              $('#disp').append($('<p id="startButton">').text("you're host"))
+              $('#disp').append($('<div id="startButton">').text("Game Start"))
+
+              $('#startButton').on('click', () => {
+                socket.emit('game start', socket.id)
+                return false
+              })
             }
-          })
+          }
 
           // 名前の変更を拾って反映
           $('#name').keyup(() => {
@@ -61,15 +78,33 @@
           })
 
           // GameStart
-          $('#disp').on('click', 'p', () => {
-            socket.emit('game start', null)
-            return false
-          })
           socket.on('game start', (room) => {
             $('#disp').empty()
             $('#disp').append($('<div id="roles">'))
-            let roles = room.start()
-            $('#roles').append($('<div>').text(roles[0]))
+            let roles = room.roles
+            let list = roles.list
+            for(let role of list){
+              $('#roles').append($('<div id="' + role.name +'">'))
+            }
+            for(let role of list){
+              $('#' + role.name).append($('<span>').text(role.name + ': ' + role.num))
+            }
+            if(room.players[0].pid === socket.id){ //ホストプレイヤー
+              for(let role of list){
+                $('#'+role.name).append($('<span id="minus_' + role.name + '" onclick="changeRoke(room)">').text('-'))
+              }
+
+              function changeRole(room){
+                sockt.emit('role change', null)
+              }
+              // $('.role').append($('p').text('-'))
+              // $('.role').append($('p').text('+'))
+            }
+
+          })
+
+          socket.on('role change', (role) => {
+
           })
 
         })
